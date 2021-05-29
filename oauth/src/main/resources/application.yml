@@ -1,0 +1,68 @@
+spring:
+    datasource:
+        url: jdbc:h2:tcp://localhost/~/memoris
+        username: sa
+        password:
+        driver-class-name: org.h2.Driver
+
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: create
+#            naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+#        properties:
+#            hibernate:
+#                dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    security:
+      oauth2:
+        client:
+          registration:
+            google:
+              clientId: 373554653660-pic6ta198hlr2hf2s64to88s5k861hs4.apps.googleusercontent.com
+              clientSecret: k0A_E087hVmE62VI_e-2LUfT
+              redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+              scope:
+                - email
+                - profile
+            facebook:
+              clientId: 121189305185277
+              clientSecret: 42ffe5aa7379e8326387e0fe16f34132
+              redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+              scope:
+                - email
+                - public_profile
+            github:
+              clientId: d3e47fc2ddd966fa4352
+              clientSecret: 3bc0f6b8332f93076354c2a5bada2f5a05aea60d
+              redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+              scope:
+                - user:email
+                - read:user
+            ftseoul:
+              clientId: acc498ef3a4f8c025b0b0d1a8fb30a5e284bc52ac245b1b71916854b2e9e74f2
+              clientSecret: aff83649d6db7b4edf04880c02954a09f298d4122a979b19f755e165a77c581e
+              redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+              authorization-grant-type : authorization_code
+              response_type: code
+              scope:
+                - public
+          provider:
+            facebook:
+              authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
+              tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
+              userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
+            ftseoul:
+              authorizationUri: https://api.intra.42.fr/oauth/authorize
+              tokenUri: https://api.intra.42.fr/oauth/token
+              userInfoUri: https://api.intra.42.fr/v2/me
+              user-name-attribute: email
+
+app:
+  auth:
+    tokenSecret: Q+H5diSM7QFHUBghZien0lQthsWa41+Ii85aKNQZing=
+    tokenExpirationMsec: 432000000
+  oauth2:
+    authorizedRedirectUris:
+      - http://localhost:3000/oauth2/redirect
+      - myandroidapp://oauth2/redirect
+      - myiosapp://oauth2/redirect
