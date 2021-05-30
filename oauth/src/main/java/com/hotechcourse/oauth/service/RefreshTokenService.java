@@ -25,11 +25,8 @@ public class RefreshTokenService {
         return refreshTokenRepository.findByToken(token);
     }
 
-    public RefreshToken createRefreshToken(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow();
-
-        return null;
+    public void deleteByUserId(Long userId) {
+        refreshTokenRepository.deleteByMember(memberRepository.findById(userId).get());
     }
 
     public RefreshToken verifyExpiration(RefreshToken token) {

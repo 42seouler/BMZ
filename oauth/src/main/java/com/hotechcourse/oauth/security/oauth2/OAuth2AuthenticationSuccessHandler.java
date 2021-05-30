@@ -51,11 +51,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
-        String token = tokenProvider.createToken(authentication);
-        String refreshToken = tokenProvider.createRefreshToken(authentication);
+        String token = tokenProvider.generateJwtToken(authentication);
+        String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", token)
+                .queryParam("accesstoken", token)
                 .queryParam("refreshtoken", refreshToken)
                 .build().toUriString();
     }

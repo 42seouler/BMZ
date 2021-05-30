@@ -3,7 +3,8 @@ package com.hotechcourse.oauth.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
+//@ResponseStatus(HttpStatus.FORBIDDEN)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class TokenRefreshException extends RuntimeException {
 
     public TokenRefreshException(String token, String message) {

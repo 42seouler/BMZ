@@ -6,10 +6,8 @@ import com.hotechcourse.oauth.repository.MemberRepository;
 import com.hotechcourse.oauth.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
-import javax.crypto.SecretKey;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,29 +23,36 @@ public class TokenProvider {
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public String createToken(Authentication authentication) {
+    public String generateJwtToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        return createAccessToken(Long.toString(userPrincipal.getId()));
+    }
+
+    public String createAccessToken(String memberId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
 
         return Jwts.builder()
-                .setSubject(Long.toString(userPrincipal.getId()))
+                .setSubject(memberId)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(appProperties.getAuth().getTokenSecret())))
                 .compact();
     }
 
-    @Transactional
-    public String createRefreshToken(Authentication authentication) {
+    public String generateRefreshToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        return createRefreshToken(Long.toString(userPrincipal.getId()));
+    }
+
+    @Transactional
+    public String createRefreshToken(String memberId) {
 
         Date now = new Date();
-        Long memberId = userPrincipal.getId();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec() * 2);
 
         String refreshToken = Jwts.builder()
-            .setSubject(Long.toString(memberId))
+            .setSubject(memberId)
             .setIssuedAt(new Date())
             .setExpiration(expiryDate)
             .signWith(Keys.hmacShaKeyFor(
@@ -55,7 +60,7 @@ public class TokenProvider {
             .compact();
 
         refreshTokenRepository.save(RefreshToken.builder()
-            .member(memberRepository.findById(memberId).orElseThrow())
+            .member(memberRepository.findById(Long.parseLong(memberId)).orElseThrow())
             .token(refreshToken)
             .expiryDate(expiryDate)
             .build()
