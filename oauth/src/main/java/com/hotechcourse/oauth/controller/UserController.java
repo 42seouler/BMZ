@@ -1,7 +1,7 @@
 package com.hotechcourse.oauth.controller;
 
 import com.hotechcourse.oauth.exception.ResourceNotFoundException;
-import com.hotechcourse.oauth.model.Member;
+import com.hotechcourse.oauth.model.User;
 import com.hotechcourse.oauth.repository.MemberRepository;
 import com.hotechcourse.oauth.security.CurrentUser;
 import com.hotechcourse.oauth.security.UserPrincipal;
@@ -18,7 +18,7 @@ public class UserController {
 
     @GetMapping("/user/me")
     @PreAuthorize("hasRole('USER')")
-    public Member getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+    public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         return memberRepository.findById(userPrincipal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
     }

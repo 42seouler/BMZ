@@ -1,10 +1,9 @@
 package com.hotechcourse.oauth.controller;
 
-import antlr.Token;
 import com.hotechcourse.oauth.exception.BadRequestException;
 import com.hotechcourse.oauth.exception.TokenRefreshException;
 import com.hotechcourse.oauth.model.AuthProvider;
-import com.hotechcourse.oauth.model.Member;
+import com.hotechcourse.oauth.model.User;
 import com.hotechcourse.oauth.model.RefreshToken;
 import com.hotechcourse.oauth.payload.*;
 import com.hotechcourse.oauth.repository.MemberRepository;
@@ -20,10 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
@@ -64,7 +60,7 @@ public class AuthController {
         }
 
         // Creating user's account
-        Member user = new Member();
+        User user = new User();
         user.setName(signUpRequest.getName());
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(signUpRequest.getPassword());
@@ -72,7 +68,7 @@ public class AuthController {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        Member result = memberRepository.save(user);
+        User result = memberRepository.save(user);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/user/me")
@@ -89,7 +85,7 @@ public class AuthController {
 
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getMember)
+                .map(RefreshToken::getUser)
                 .map(member -> {
                     Long memberId = member.getId();
                     String accessToken = tokenProvider.createAccessToken(Long.toString(memberId));
@@ -100,8 +96,7 @@ public class AuthController {
                             .accessToken(accessToken)
                             .refreshToken(refreshToken)
                             .build());
-                }).orElseThrow(() -> new RuntimeException("Refresh token is not in database!"));
-//                }).orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
+                }).orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
     }
 
 }

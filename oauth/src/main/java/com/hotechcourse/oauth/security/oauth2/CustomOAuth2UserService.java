@@ -2,7 +2,7 @@ package com.hotechcourse.oauth.security.oauth2;
 
 import com.hotechcourse.oauth.exception.OAuth2AuthenticationProcessingException;
 import com.hotechcourse.oauth.model.AuthProvider;
-import com.hotechcourse.oauth.model.Member;
+import com.hotechcourse.oauth.model.User;
 import com.hotechcourse.oauth.repository.MemberRepository;
 import com.hotechcourse.oauth.security.UserPrincipal;
 import com.hotechcourse.oauth.security.oauth2.user.OAuth2UserInfo;
@@ -44,8 +44,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
 
-        Optional<Member> userOptional = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
-        Member user;
+        Optional<User> userOptional = memberRepository.findByEmail(oAuth2UserInfo.getEmail());
+        User user;
         if(userOptional.isPresent()) {
             user = userOptional.get();
             if(!user.getProvider().equals(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
@@ -61,8 +61,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return UserPrincipal.create(user, oAuth2User.getAttributes());
     }
 
-    private Member registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-        Member user = new Member();
+    private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
+        User user = new User();
 
         user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
         user.setProviderId(oAuth2UserInfo.getId());
@@ -72,7 +72,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         return memberRepository.save(user);
     }
 
-    private Member updateExistingUser(Member existingUser, OAuth2UserInfo oAuth2UserInfo) {
+    private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
         existingUser.setName(oAuth2UserInfo.getName());
         existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
         return memberRepository.save(existingUser);

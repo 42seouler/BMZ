@@ -2,7 +2,6 @@ package com.hotechcourse.oauth.service;
 
 import com.hotechcourse.oauth.config.AppProperties;
 import com.hotechcourse.oauth.exception.TokenRefreshException;
-import com.hotechcourse.oauth.model.Member;
 import com.hotechcourse.oauth.model.RefreshToken;
 import com.hotechcourse.oauth.repository.MemberRepository;
 import com.hotechcourse.oauth.repository.RefreshTokenRepository;
@@ -26,7 +25,7 @@ public class RefreshTokenService {
     }
 
     public void deleteByUserId(Long userId) {
-        refreshTokenRepository.deleteByMember(memberRepository.findById(userId).get());
+        refreshTokenRepository.deleteByUser(memberRepository.findById(userId).get());
     }
 
     public RefreshToken verifyExpiration(RefreshToken token) {

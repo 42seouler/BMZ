@@ -19,10 +19,10 @@ import lombok.Setter;
 })
 @Getter
 @Setter
-public class Member {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
+    @Column(name = "user_id")
     private Long id;
     private String name;
     private String email;

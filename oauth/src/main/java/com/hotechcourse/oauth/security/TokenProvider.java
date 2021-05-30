@@ -60,7 +60,7 @@ public class TokenProvider {
             .compact();
 
         refreshTokenRepository.save(RefreshToken.builder()
-            .member(memberRepository.findById(Long.parseLong(memberId)).orElseThrow())
+            .user(memberRepository.findById(Long.parseLong(memberId)).orElseThrow())
             .token(refreshToken)
             .expiryDate(expiryDate)
             .build()
