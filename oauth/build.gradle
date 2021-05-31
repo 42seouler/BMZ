@@ -1,6 +1,7 @@
 plugins {
 	id 'org.springframework.boot' version '2.5.0'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'org.asciidoctor.convert' version '1.5.8'
 	id 'java'
 }
 
@@ -18,25 +19,38 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('snippetsDir', file("build/generated-snippets"))
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation "io.springfox:springfox-boot-starter:3.0.0"
+//	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'mysql:mysql-connector-java'
 	compileOnly 'io.jsonwebtoken:jjwt-api:0.11.2'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2',
 			// Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms:
 			//'org.bouncycastle:bcprov-jdk15on:1.60',
 			'io.jsonwebtoken:jjwt-jackson:0.11.2' // or 'io.jsonwebtoken:jjwt-gson:0.11.2' for gson
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 test {
+	outputs.dir snippetsDir
 	useJUnitPlatform()
+}
+
+asciidoctor {
+	inputs.dir snippetsDir
+	dependsOn test
 }
