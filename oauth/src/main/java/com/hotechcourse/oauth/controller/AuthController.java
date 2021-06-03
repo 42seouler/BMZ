@@ -42,7 +42,8 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/login")
-    @ApiOperation(value = "email, 비밀번호로 로그인", notes = "성공시 access, refresh token을 body에 넣어서 반환합니다.")
+    @ApiOperation(value = "Local 계정 로그인 email, password로 요청", notes = "SUCCESS시\n" +
+            "")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
