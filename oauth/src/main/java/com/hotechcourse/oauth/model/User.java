@@ -13,6 +13,8 @@ import javax.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
@@ -32,4 +34,5 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
     private String providerId;
+    private Date expiredDate;
 }
