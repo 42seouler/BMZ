@@ -54,9 +54,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String token = tokenProvider.generateJwtToken(authentication);
         String refreshToken = tokenProvider.generateRefreshToken(authentication);
 
+        CookieUtils.addCookie(response, "sparta_refresh_token", refreshToken, 60 * 60 * 24 * 5);
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("accesstoken", token)
-                .queryParam("refreshtoken", refreshToken)
+                .queryParam("sparta_access_token", token)
                 .build().toUriString();
     }
 

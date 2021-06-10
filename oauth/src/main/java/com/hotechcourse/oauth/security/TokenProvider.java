@@ -8,6 +8,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import javax.crypto.SecretKey;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,13 +51,13 @@ public class TokenProvider {
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec() * 2);
+        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS512); //or HS384 or HS512
 
         String refreshToken = Jwts.builder()
             .setSubject(memberId)
             .setIssuedAt(new Date())
             .setExpiration(expiryDate)
-            .signWith(Keys.hmacShaKeyFor(
-                Decoders.BASE64.decode(appProperties.getAuth().getTokenSecret())))
+            .signWith(key)
             .compact();
 
         refreshTokenRepository.save(RefreshToken.builder()
