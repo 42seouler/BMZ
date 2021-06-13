@@ -38,7 +38,7 @@
                         <button class='connecting_button' id='personal_code_chat_button'>
                             <img src='./utils/images/chatButton.png' class='connecting_buttons_image'></img>
                         </button>
-                        <button class='connecting_button' id='personal_code_video_button'>
+                        <button class='connecting_button display_none' id='personal_code_video_button'>
                             <img src='./utils/images/videoButton.png' class='connecting_buttons_image'></img>
                         </button>
                     </div>
@@ -49,14 +49,14 @@
                         <button class='connecting_button' id='stranger_chat_button'>
                             <img src='/utils/images/chatButton.png' class='connecting_buttons_image'></img>
                         </button>
-                        <button class='connecting_button' id='stranger_video_button'>
+                        <button class='connecting_button display_none' id='stranger_video_button'>
                             <img src='/utils/images/videoButton.png' class='connecting_buttons_image'></img>
                         </button>
                     </div>
                 </div>
                 <div class='checkbox_container'>
                     <div class='checkbox_connection' id='allow_strangers_checkbox'>
-                        <img id='allow_strangers_checkbox_image' class='' src='./utils/images/check.png'></img>
+                        <img id='allow_strangers_checkbox_image' class='display_none' src='./utils/images/check.png'></img>
                     </div>
                     <p class='checkbox_container_paragraph'>Allow connection from strangers</p>
                 </div>
@@ -125,6 +125,7 @@
         <script src='./js/store.js' type='module'></script>
         <script src='./js/webRTCHandler.js' type='module'></script>
         <script src='./js/recordingUtils.js' type='module'></script>
+        <script src='./js/strangerUtils.js' type='module'></script>
         <script src='./js/main.js' type='module'></script>
     </body>
 </html>

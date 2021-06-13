@@ -25,6 +25,8 @@ export const getLocalPreview = () => {
     .getUserMedia(defaultConstraints)
     .then((stream) => {
       ui.updateLocalVideo(stream);
+      ui.showVideoCallButtons();
+      store.setCallState(constants.callState.CALL_AVAILABLE);
       store.setLocalStream(stream);
     })
     .catch((err) => {
@@ -46,14 +48,12 @@ const createPeerConnection = () => {
     };
 
     dataChannel.onmessage = (event) => {
-      console.log("message came from data channel");
       const message = JSON.parse(event.data);
       ui.appendMessage(message);
     };
   };
 
   peerConection.onicecandidate = (event) => {
-    console.log("geeting ice candidates from stun server");
     if (event.candidate) {
       // send our ice candidates to other peer
       wss.sendDataUsingWebRTCSignaling({
@@ -66,7 +66,6 @@ const createPeerConnection = () => {
 
   peerConection.onconnectionstatechange = (event) => {
     if (peerConection.connectionState === "connected") {
-      console.log("succesfully connected with other peer");
     }
   };
 
@@ -82,7 +81,8 @@ const createPeerConnection = () => {
   // add our stream to peer connection
 
   if (
-    connectedUserDetails.callType === constants.callType.VIDEO_PERSONAL_CODE
+    connectedUserDetails.callType === constants.callType.VIDEO_PERSONAL_CODE ||
+    connectedUserDetails.callType === constants.callType.VIDEO_STRANGER
   ) {
     const localStream = store.getState().localStream;
 
@@ -112,6 +112,19 @@ export const sendPreOffer = (callType, calleePersonalCode) => {
       calleePersonalCode,
     };
     ui.showCallingDialog(callingDialogRejectCallHandler);
+    store.setCallState(constants.callState.CALL_UNAVAILABLE);
+    wss.sendPreOffer(data);
+  }
+
+  if (
+    callType === constants.callType.CHAT_STRANGER ||
+    callType === constants.callType.VIDEO_STRANGER
+  ) {
+    const data = {
+      callType,
+      calleePersonalCode,
+    };
+    store.setCallState(constants.callState.CALL_UNAVAILABLE);
     wss.sendPreOffer(data);
   }
 };
@@ -119,40 +132,64 @@ export const sendPreOffer = (callType, calleePersonalCode) => {
 export const handlePreOffer = (data) => {
   const { callType, callerSocketId } = data;
 
+  if (!checkCallPossibility()) {
+    return sendPreOfferAnswer(
+      constants.preOfferAnswer.CALL_UNAVAILABLE,
+      callerSocketId
+    );
+  }
+
   connectedUserDetails = {
     socketId: callerSocketId,
     callType,
   };
 
+  store.setCallState(constants.callState.CALL_UNAVAILABLE);
+
   if (
     callType === constants.callType.CHAT_PERSONAL_CODE ||
     callType === constants.callType.VIDEO_PERSONAL_CODE
   ) {
-    console.log("showing call dialog");
     ui.showIncomingCallDialog(callType, acceptCallHandler, rejectCallHandler);
+  }
+
+  if (
+    callType === constants.callType.CHAT_STRANGER ||
+    callType === constants.callType.VIDEO_STRANGER
+  ) {
+    createPeerConnection();
+    sendPreOfferAnswer(constants.preOfferAnswer.CALL_ACCEPTED);
+    ui.showCallElements(connectedUserDetails.callType);
   }
 };
 
 const acceptCallHandler = () => {
-  console.log("call accepted");
   createPeerConnection();
   sendPreOfferAnswer(constants.preOfferAnswer.CALL_ACCEPTED);
   ui.showCallElements(connectedUserDetails.callType);
 };
 
 const rejectCallHandler = () => {
-  console.log("call rejected");
   sendPreOfferAnswer();
+  setIncomingCallsAvailable();
   sendPreOfferAnswer(constants.preOfferAnswer.CALL_REJECTED);
 };
 
 const callingDialogRejectCallHandler = () => {
-  console.log("rejecting the call");
+  const data = {
+    connectedUserSocketId: connectedUserDetails.socketId,
+  };
+  closePeerConnectionAndResetState();
+
+  wss.sendUserHangedUp(data);
 };
 
-const sendPreOfferAnswer = (preOfferAnswer) => {
+const sendPreOfferAnswer = (preOfferAnswer, callerSocketId = null) => {
+  const socketId = callerSocketId
+    ? callerSocketId
+    : connectedUserDetails.socketId;
   const data = {
-    callerSocketId: connectedUserDetails.socketId,
+    callerSocketId: socketId,
     preOfferAnswer,
   };
   ui.removeAllDialogs();
@@ -166,15 +203,18 @@ export const handlePreOfferAnswer = (data) => {
 
   if (preOfferAnswer === constants.preOfferAnswer.CALLEE_NOT_FOUND) {
     ui.showInfoDialog(preOfferAnswer);
+    setIncomingCallsAvailable();
     // show dialog that callee has not been found
   }
 
   if (preOfferAnswer === constants.preOfferAnswer.CALL_UNAVAILABLE) {
+    setIncomingCallsAvailable();
     ui.showInfoDialog(preOfferAnswer);
     // show dialog that callee is not able to connect
   }
 
   if (preOfferAnswer === constants.preOfferAnswer.CALL_REJECTED) {
+    setIncomingCallsAvailable();
     ui.showInfoDialog(preOfferAnswer);
     // show dialog that call is rejected by the callee
   }
@@ -208,12 +248,10 @@ export const handleWebRTCOffer = async (data) => {
 };
 
 export const handleWebRTCAnswer = async (data) => {
-  console.log("handling webRTC Answer");
   await peerConection.setRemoteDescription(data.answer);
 };
 
 export const handleWebRTCCandidate = async (data) => {
-  console.log("handling incoming webRTC candidates");
   try {
     await peerConection.addIceCandidate(data.candidate);
   } catch (err) {
@@ -252,7 +290,6 @@ export const switchBetweenCameraAndScreenSharing = async (
 
     ui.updateLocalVideo(localStream);
   } else {
-    console.log("switching for screen sharing");
     try {
       screenSharingStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
@@ -281,5 +318,67 @@ export const switchBetweenCameraAndScreenSharing = async (
         err
       );
     }
+  }
+};
+
+// hang up
+
+export const handleHangUp = () => {
+  const data = {
+    connectedUserSocketId: connectedUserDetails.socketId,
+  };
+
+  wss.sendUserHangedUp(data);
+  closePeerConnectionAndResetState();
+};
+
+export const handleConnectedUserHangedUp = () => {
+  closePeerConnectionAndResetState();
+};
+
+const closePeerConnectionAndResetState = () => {
+  if (peerConection) {
+    peerConection.close();
+    peerConection = null;
+  }
+
+  // active mic and camera
+  if (
+    connectedUserDetails.callType === constants.callType.VIDEO_PERSONAL_CODE ||
+    connectedUserDetails.callType === constants.callType.VIDEO_STRANGER
+  ) {
+    store.getState().localStream.getVideoTracks()[0].enabled = true;
+    store.getState().localStream.getAudioTracks()[0].enabled = true;
+  }
+
+  ui.updateUIAfterHangUp(connectedUserDetails.callType);
+  setIncomingCallsAvailable();
+  connectedUserDetails = null;
+};
+
+const checkCallPossibility = (callType) => {
+  const callState = store.getState().callState;
+
+  if (callState === constants.callState.CALL_AVAILABLE) {
+    return true;
+  }
+
+  if (
+    (callType === constants.callType.VIDEO_PERSONAL_CODE ||
+      callType === constants.callType.VIDEO_STRANGER) &&
+    callState === constants.callState.CALL_AVAILABLE_ONLY_CHAT
+  ) {
+    return false;
+  }
+
+  return false;
+};
+
+const setIncomingCallsAvailable = () => {
+  const localStream = store.getState().localStream;
+  if (localStream) {
+    store.setCallState(constants.callState.CALL_AVAILABLE);
+  } else {
+    store.setCallState(constants.callState.CALL_AVAILABLE_ONLY_CHAT);
   }
 };
