@@ -72,6 +72,9 @@ strangerVideoButton.addEventListener("click", () => {
 // register event for allow connections from strangers
 const checkbox = document.getElementById("allow_strangers_checkbox");
 checkbox.addEventListener("click", () => {
+  if (!store.getState().allowConnectionsFromClusterB || !store.getState().allowConnectionsFromStrangers) {
+    return ;
+  }
   const checkboxState = store.getState().allowConnectionsFromStrangers;
   if (store.getState().allowConnectionsFromClusterB === true) {
     ui.updateClusterBCheckbox(false);
