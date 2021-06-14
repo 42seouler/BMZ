@@ -53,6 +53,9 @@ personalCodeVideoButton.addEventListener("click", () => {
 
 const strangerChatButton = document.getElementById("stranger_chat_button");
 strangerChatButton.addEventListener("click", () => {
+  if (!store.getState().allowConnectionsFromStrangers && !store.getState().allowConnectionsFromClusterB) {
+    return ;
+  }
   const data = {
     callType: constants.callType.CHAT_STRANGER,
     clusterB: store.getState().allowConnectionsFromClusterB,
@@ -62,19 +65,19 @@ strangerChatButton.addEventListener("click", () => {
 
 const strangerVideoButton = document.getElementById("stranger_video_button");
 strangerVideoButton.addEventListener("click", () => {
-    const data = {
-      callType: constants.callType.VIDEO_STRANGER,
-      clusterB: store.getState().allowConnectionsFromClusterB,
-    }
+  if (!store.getState().allowConnectionsFromStrangers && !store.getState().allowConnectionsFromClusterB) {
+    return ;
+  }
+  const data = {
+    callType: constants.callType.VIDEO_STRANGER,
+    clusterB: store.getState().allowConnectionsFromClusterB,
+  }
   strangerUtils.getStrangerSocketIdAndConnect(data);
 });
 
 // register event for allow connections from strangers
 const checkbox = document.getElementById("allow_strangers_checkbox");
 checkbox.addEventListener("click", () => {
-  if (!store.getState().allowConnectionsFromClusterB || !store.getState().allowConnectionsFromStrangers) {
-    return ;
-  }
   const checkboxState = store.getState().allowConnectionsFromStrangers;
   if (store.getState().allowConnectionsFromClusterB === true) {
     ui.updateClusterBCheckbox(false);
