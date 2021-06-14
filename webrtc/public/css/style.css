@@ -50,14 +50,14 @@ body {
 
 
 
-@media screen and (max-height: 649px) {
+@media screen and (max-height: 500px) {
   #wrapper {
     visibility: visible;
     z-index: 999;
   }
 }
 
-@media screen and (max-width: 1599px) {
+@media screen and (max-width: 1000px) {
   #wrapper {
     visibility: visible;
     z-index: 999;
