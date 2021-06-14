@@ -43,7 +43,7 @@ body {
 .dashboard_container {
   width: 25%;
   height: 100%;
-  background: linear-gradient(168.68deg, #0052c9 1.12%, #0a91db 100%);
+  background-image: url('../utils/images/background_login.jpeg');
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -58,12 +58,13 @@ body {
 .messenger_container {
   width: 25%;
   height: 100%;
-  background: #f4f9fd;
+  background: #9bbbd4;
   display: flex;
   flex-direction: column;
 }
 
 .logo_container {
+  margin-top: 40px;
   margin-left: 40px;
   width: 180px;
   height: 120px;
@@ -200,7 +201,14 @@ body {
   justify-content: center;
 }
 
-.checkbox_container_paragraph {
+.checkbox_container_left {
+  font-weight: 500;
+  font-size: 16px;
+  margin-left: 15px;
+  margin-right: 47px;
+}
+
+.checkbox_container_right {
   font-weight: 500;
   font-size: 16px;
   margin-left: 15px;
@@ -215,7 +223,7 @@ body {
   position: relative;
 }
 .new_message_input {
-  margin: 0 40px;
+  margin: 0 25px;
   margin-bottom: 30px;
   width: calc(100% - 80px);
   height: 60px;
@@ -238,6 +246,7 @@ body {
   flex-grow: 1;
   margin: 40px 30px;
   overflow-y: scroll;
+    /*overflow: auto;*/
 }
 
 .message_left_container {
@@ -262,19 +271,20 @@ body {
 }
 
 .message_right_paragraph {
-  background: linear-gradient(168.68deg, #0052c9 1.12%, #0a91db 100%);
+  background: #fef01b;
   border: 1px solid #d5deeb;
   border-radius: 8px 8px 8px 0px;
   padding: 20px 13px;
-  color: #ffffff;
+  color: #556677;
   min-width: 60px;
+  margin-right: 25px;
 }
 
 .send_message_button {
   width: 40px;
   height: 40px;
   position: absolute;
-  right: 50px;
+  right: 65px;
   top: 10px;
   box-shadow: 0px 2px 20px 5px rgba(10, 145, 219, 0.05);
   background: linear-gradient(180deg, #ff9519 0%, #ffba6a 100%);
@@ -292,8 +302,8 @@ body {
   height: calc(100% - 70px);
   margin: 30px 40px 40px 40px;
   border-radius: 15px;
-  background: linear-gradient(168.68deg, #0052c9 1.12%, #0a91db 100%);
-  /* background-image: url('../utils/images/logo.png'); */
+  /*background: linear-gradient(168.68deg, #0052c9 1.12%, #0a91db 100%);*/
+  background-image: url('../utils/images/background_login.jpeg');
 }
 
 .videos_placeholder {
@@ -380,7 +390,7 @@ body {
 .dialog_content {
   width: 520px;
   height: 530px;
-  background: white;
+  /*background: white;*/
   border: 1px solid #d5deeb;
   box-shadow: 0px 2px 20px 5px rgba(10, 145, 219, 0.05);
   border-radius: 15px;
@@ -388,6 +398,15 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
+  background-image: url("../utils/images/dialogAvatar.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.image_size {
+  width: 500px;
+  height: 500px;
 }
 
 .dialog_title {
@@ -397,8 +416,8 @@ body {
 }
 
 .dialog_image_container {
-  width: 275px;
-  height: 275px;
+  width: 250px;
+  height: 250px;
   border-radius: 275px;
   background: linear-gradient(168.68deg, #0052c9 1.12%, #0a91db 100%);
   display: flex;

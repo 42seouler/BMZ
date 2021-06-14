@@ -124,6 +124,8 @@ export const sendPreOffer = (callType, calleePersonalCode) => {
       callType,
       calleePersonalCode,
     };
+    console.log(callType);
+    ui.showCallingDialog(callingDialogRejectCallHandler);
     store.setCallState(constants.callState.CALL_UNAVAILABLE);
     wss.sendPreOffer(data);
   }
@@ -157,9 +159,12 @@ export const handlePreOffer = (data) => {
     callType === constants.callType.CHAT_STRANGER ||
     callType === constants.callType.VIDEO_STRANGER
   ) {
-    createPeerConnection();
-    sendPreOfferAnswer(constants.preOfferAnswer.CALL_ACCEPTED);
-    ui.showCallElements(connectedUserDetails.callType);
+    console.log(callType);
+    ui.showIncomingCallDialog(callType, acceptCallHandler, rejectCallHandler);
+    // 즉시 연결을 위해 남겨둠
+    // createPeerConnection();
+    // sendPreOfferAnswer(constants.preOfferAnswer.CALL_ACCEPTED);
+    // ui.showCallElements(connectedUserDetails.callType);
   }
 };
 
@@ -276,7 +281,7 @@ export const switchBetweenCameraAndScreenSharing = async (
     });
 
     if (sender) {
-      sender.replaceTrack(localStream.getVideoTracks()[0]);
+      await sender.replaceTrack(localStream.getVideoTracks()[0]);
     }
 
     // stop screen sharing stream

@@ -11,18 +11,27 @@
             </div>
             <div>
                 <div class='description_container'>
-                    <p class='description_container_paragraph'>
-                        Talk with other user by passing his personal code or talk with strangers!
+                    <p id='description_container_paragraph'>
+                        밥 묵자!
+                    </p>
+                    <p id='connected_peers'>
+                        Total members : 포리투 만세!
+                    </p>
+                    <p id='clusterA'>
+                        Cadet in 개포 클러스터 : 여기는 본진!
+                    </p>
+                    <p id='clusterB'>
+                        Cadet in 서초 클러스터 : 여기는 멀티!
                     </p>
                 </div>
                 <div class='personal_code_container'>
                     <div class='personal_code_title_container'>
                         <p class='personal_code_title_paragraph'>
-                            Your personal code
+                            My personal code
                         </p>
                     </div>
                     <div class="personal_code_value_container">
-                        <p class='personal_code_value_paragraph' id='personal_code_paragraph'>DDDDDD</p>
+                        <p class='personal_code_value_paragraph' id='personal_code_paragraph'>우리 밥 먹고 친해져요!</p>
                         <button class='personal_code_copy_button' id='personal_code_copy_button'>
                             <img src='./utils/images/copyButton.png'></img>
                         </button>
@@ -30,7 +39,7 @@
                 </div>
                 </div>
                 <div class='personal_code_connecting_container'>
-                    <p class='personal_code_connecting_paragraph'>Personal Code</p>
+                    <p class='personal_code_connecting_paragraph'>Your personal code</p>
                     <div class='personal_code_connecting_input_container'>
                         <input class='personal_code_input' id='personal_code_input'></input>
                     </div>
@@ -44,7 +53,7 @@
                     </div>
                 </div>
                 <div class='stranger_connecting_container'>
-                    <p class='stranger_title_container'>Stranger</p>
+                    <p class='stranger_title_container'>Find the Cadet in random</p>
                     <div class='stranger_buttons_container'>
                         <button class='connecting_button' id='stranger_chat_button'>
                             <img src='/utils/images/chatButton.png' class='connecting_buttons_image'></img>
@@ -56,9 +65,13 @@
                 </div>
                 <div class='checkbox_container'>
                     <div class='checkbox_connection' id='allow_strangers_checkbox'>
-                        <img id='allow_strangers_checkbox_image' class='display_none' src='./utils/images/check.png'></img>
+                        <img id='allow_strangers_checkbox_image' class='display_none' src='./utils/images/check.png'>
                     </div>
-                    <p class='checkbox_container_paragraph'>Allow connection from strangers</p>
+                    <p class='checkbox_container_left'>개포 클러스터</p>
+                    <div class='checkbox_connection' id='cluster_b_checkbox'>
+                        <img id='allow_cluster_b_checkbox_image' class='display_none' src='./utils/images/check.png'>
+                    </div>
+                    <p class='checkbox_container_right'>서초 클러스터</p>
                 </div>
                 <div class='dashboard_blur display_none' id='dashboard_blur'></div>
             </div>

@@ -6,12 +6,23 @@ let strangerCallType;
 
 export const changeStrangerConnectionStatus = (status) => {
   const data = { status };
-  wss.changeStrangerConnectionStatus(data);
+  wss.changeClusterAConnectionStatus(data);
 };
 
-export const getStrangerSocketIdAndConnect = (callType) => {
+// ClusterB Connection status
+export const changeClusterBConnectionStatus = (status) => {
+  const data = { status };
+  wss.changeClusterBConnectionStatus(data);
+};
+
+export const getStrangerSocketIdAndConnect = (data) => {
+  const { callType, clusterB } = data;
   strangerCallType = callType;
-  wss.getStrangerSocketId();
+  if (clusterB === true) {
+    wss.getClusterBSocketId();
+  } else {
+    wss.getClusterASocketId();
+  }
 };
 
 export const connectWithStranger = (data) => {

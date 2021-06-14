@@ -7,6 +7,8 @@ let state = {
   screenSharingActive: false,
   screenSharingStream: null,
   allowConnectionsFromStrangers: false,
+  allowConnectionsFromClusterA: false,
+  allowConnectionsFromClusterB: false,
   callState: constants.callState.CALL_AVAILABLE_ONLY_CHAT,
 };
 
@@ -28,6 +30,14 @@ export const setAllowConnectionsFromStrangers = (allowConnection) => {
   state = {
     ...state,
     allowConnectionsFromStrangers: allowConnection,
+  };
+};
+
+// update ClusterB status
+export const setAllowConnectionsFromClusterB = (allowConnection) => {
+  state = {
+    ...state,
+    allowConnectionsFromClusterB: allowConnection,
   };
 };
 

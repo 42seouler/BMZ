@@ -5,6 +5,7 @@ import * as constants from "./constants.js";
 import * as ui from "./ui.js";
 import * as recordingUtils from "./recordingUtils.js";
 import * as strangerUtils from "./strangerUtils.js";
+import {getState} from "./store.js";
 
 // initialization of socketIO connection
 const socket = io("/");
@@ -51,23 +52,48 @@ personalCodeVideoButton.addEventListener("click", () => {
 
 const strangerChatButton = document.getElementById("stranger_chat_button");
 strangerChatButton.addEventListener("click", () => {
-  strangerUtils.getStrangerSocketIdAndConnect(constants.callType.CHAT_STRANGER);
+  const data = {
+    callType: constants.callType.CHAT_STRANGER,
+    clusterB: store.getState().allowConnectionsFromClusterB,
+  }
+  strangerUtils.getStrangerSocketIdAndConnect(data);
 });
 
 const strangerVideoButton = document.getElementById("stranger_video_button");
 strangerVideoButton.addEventListener("click", () => {
-  strangerUtils.getStrangerSocketIdAndConnect(
-    constants.callType.VIDEO_STRANGER
-  );
+    const data = {
+      callType: constants.callType.VIDEO_STRANGER,
+      clusterB: store.getState().allowConnectionsFromClusterB,
+    }
+  strangerUtils.getStrangerSocketIdAndConnect(data);
 });
 
 // register event for allow connections from strangers
 const checkbox = document.getElementById("allow_strangers_checkbox");
 checkbox.addEventListener("click", () => {
   const checkboxState = store.getState().allowConnectionsFromStrangers;
+  if (store.getState().allowConnectionsFromClusterB === true) {
+    ui.updateClusterBCheckbox(false);
+    store.setAllowConnectionsFromClusterB(false);
+    strangerUtils.changeClusterBConnectionStatus(false);
+  }
   ui.updateStrangerCheckbox(!checkboxState);
   store.setAllowConnectionsFromStrangers(!checkboxState);
   strangerUtils.changeStrangerConnectionStatus(!checkboxState);
+});
+
+// register event for allow connections clusterB
+const clusterBCheckbox = document.getElementById("cluster_b_checkbox");
+clusterBCheckbox.addEventListener("click", () => {
+  const checkboxState = store.getState().allowConnectionsFromClusterB;
+  if (store.getState().allowConnectionsFromStrangers === true) {
+    ui.updateStrangerCheckbox(false);
+    store.setAllowConnectionsFromStrangers(false);
+    strangerUtils.changeStrangerConnectionStatus(false);
+  }
+  ui.updateClusterBCheckbox(!checkboxState);
+  store.setAllowConnectionsFromClusterB(!checkboxState);
+  strangerUtils.changeClusterBConnectionStatus(!checkboxState);
 });
 
 // event listeners for video call buttons
@@ -99,11 +125,15 @@ switchForScreenSharingButton.addEventListener("click", () => {
 // messenger
 
 const newMessageInput = document.getElementById("new_message_input");
-newMessageInput.addEventListener("keydown", (event) => {
+newMessageInput.addEventListener("keypress", (event) => {
   const key = event.key;
+  const message = newMessageInput.value;
 
   if (key === "Enter") {
-    webRTCHandler.sendMessageUsingDataChannel(event.target.value);
+    if (message === "") {
+      return ;
+    }
+    webRTCHandler.sendMessageUsingDataChannel(message);
     ui.appendMessage(event.target.value, true);
     newMessageInput.value = "";
   }
@@ -112,6 +142,9 @@ newMessageInput.addEventListener("keydown", (event) => {
 const sendMessageButton = document.getElementById("send_message_button");
 sendMessageButton.addEventListener("click", () => {
   const message = newMessageInput.value;
+  if (message === "") {
+    return ;
+  }
   webRTCHandler.sendMessageUsingDataChannel(message);
   ui.appendMessage(message, true);
   newMessageInput.value = "";

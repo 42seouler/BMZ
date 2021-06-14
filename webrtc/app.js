@@ -14,10 +14,17 @@ app.get("/", (req, res) => {
 });
 
 let connectedPeers = [];
-let connectedPeersStrangers = [];
+let connectedPeersClusterA = [];
+let connectedPeersClusterB = [];
 
 io.on("connection", (socket) => {
   connectedPeers.push(socket.id);
+  let data = {
+    totalPeers: connectedPeers.length,
+    clusterA: connectedPeersClusterA.length,
+    clusterB: connectedPeersClusterB.length
+  };
+  io.emit('connected-peers-status', data);
 
   socket.on("pre-offer", (data) => {
     const { calleePersonalCode, callType } = data;
@@ -75,28 +82,43 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("stranger-connection-status", (data) => {
+  // ClusterA 대기열에 추가 또는 제거
+  socket.on("cluster-a-connection-status", (data) => {
     const { status } = data;
     if (status) {
-      connectedPeersStrangers.push(socket.id);
+      connectedPeersClusterA.push(socket.id);
     } else {
-      const newConnectedPeersStrangers = connectedPeersStrangers.filter(
-        (peerSocketId) => peerSocketId !== socket.id
+      connectedPeersClusterA = connectedPeersClusterA.filter(
+          (peerSocketId) => peerSocketId !== socket.id
       );
-      connectedPeersStrangers = newConnectedPeersStrangers;
     }
+    io.emit('cluster-a-status', connectedPeersClusterA.length);
   });
 
-  socket.on("get-stranger-socket-id", () => {
+  // ClusterB 대기열에 추가 또는 제거
+  socket.on("cluster-b-connection-status", (data) => {
+    const { status } = data;
+    if (status) {
+      connectedPeersClusterB.push(socket.id);
+    } else {
+      connectedPeersClusterB = connectedPeersClusterB.filter(
+          (peerSocketId) => peerSocketId !== socket.id
+      );
+    }
+    io.emit('cluster-b-status', connectedPeersClusterB.length);
+  });
+
+  // ClusterA에서 랜덤으로 카뎃 소켓 얻기
+  socket.on("get-cluster-a-socket-id", () => {
     let randomStrangerSocketId;
-    const filteredConnectedPeersStrangers = connectedPeersStrangers.filter(
+    const filteredConnectedPeersClusterA = connectedPeersClusterA.filter(
       (peerSocketId) => peerSocketId !== socket.id
     );
 
-    if (filteredConnectedPeersStrangers.length > 0) {
+    if (filteredConnectedPeersClusterA.length > 0) {
       randomStrangerSocketId =
-        filteredConnectedPeersStrangers[
-          Math.floor(Math.random() * filteredConnectedPeersStrangers.length)
+        filteredConnectedPeersClusterA[
+          Math.floor(Math.random() * filteredConnectedPeersClusterA.length)
         ];
     } else {
       randomStrangerSocketId = null;
@@ -109,17 +131,51 @@ io.on("connection", (socket) => {
     io.to(socket.id).emit("stranger-socket-id", data);
   });
 
+  // ClusterB에서 랜덤으로 카뎃 소켓 얻기
+  socket.on("get-cluster-b-socket-id", () => {
+    let randomStrangerSocketId;
+    const filteredConnectedPeersClusterB = connectedPeersClusterB.filter(
+        (peerSocketId) => peerSocketId !== socket.id
+    );
+
+    if (filteredConnectedPeersClusterB.length > 0) {
+      randomStrangerSocketId =
+          filteredConnectedPeersClusterB[
+              Math.floor(Math.random() * filteredConnectedPeersClusterB.length)
+              ];
+    } else {
+      randomStrangerSocketId = null;
+    }
+
+    const data = {
+      randomStrangerSocketId,
+    };
+
+    io.to(socket.id).emit("stranger-socket-id", data);
+  });
+
+  // 소켓 연결이 끊어지면 대기열에서 제거 및 소켓에게 전파
   socket.on("disconnect", () => {
     const newConnectedPeers = connectedPeers.filter(
       (peerSocketId) => peerSocketId !== socket.id
     );
-
     connectedPeers = newConnectedPeers;
 
-    const newConnectedPeersStrangers = connectedPeersStrangers.filter(
+    const newConnectedPeersStrangers = connectedPeersClusterA.filter(
       (peerSocketId) => peerSocketId !== socket.id
     );
-    connectedPeersStrangers = newConnectedPeersStrangers;
+    connectedPeersClusterA = newConnectedPeersStrangers;
+
+    const newConnectedPeersClusterB = connectedPeersClusterB.filter(
+        (peerSocketId) => peerSocketId !== socket.id
+    );
+    connectedPeersClusterB = newConnectedPeersClusterB;
+    data = {
+      totalPeers: connectedPeers.length,
+      clusterA: connectedPeersClusterA.length,
+      clusterB: connectedPeersClusterB.length
+    }
+    io.emit('disconnect-status', data);
   });
 });
 

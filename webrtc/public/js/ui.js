@@ -8,6 +8,37 @@ export const updatePersonalCode = (personalCode) => {
   personalCodeParagraph.innerHTML = personalCode;
 };
 
+// 접속자 수 상태 변화
+
+export const connectedPeersStatus = (totalPeers) => {
+  const totalPeersElement = document.getElementById(
+      "connected_peers"
+  );
+  totalPeersElement.innerHTML = `Total members : ${totalPeers}`;
+}
+
+export const clusterAStatus = (clusterA) => {
+  const clusterAElement = document.getElementById(
+      "clusterA"
+  );
+  clusterAElement.innerHTML = `Cadet in 개포 클러스터 : ${clusterA}`;
+}
+
+export const clusterBStatus = (clusterB) => {
+  const clusterAElement = document.getElementById(
+      "clusterB"
+  );
+  clusterAElement.innerHTML = `Cadet in 서초 클러스터 : ${clusterB}`;
+}
+
+export const updateStatus = (personalCode) => {
+  const { totalPeers, clusterA, clusterB } = personalCode;
+
+  connectedPeersStatus(totalPeers);
+  clusterAStatus(clusterA);
+  clusterBStatus(clusterB);
+};
+
 export const updateLocalVideo = (stream) => {
   const localVideo = document.getElementById("local_video");
   localVideo.srcObject = stream;
@@ -38,7 +69,7 @@ export const showIncomingCallDialog = (
   rejectCallHandler
 ) => {
   const callTypeInfo =
-    callType === constants.callType.CHAT_PERSONAL_CODE ? "Chat" : "Video";
+    callType === constants.callType.CHAT_PERSONAL_CODE || constants.callType.CHAT_STRANGER ? "Chat" : "Video";
 
   const incomingCallDialog = elements.getIncomingCallDialog(
     callTypeInfo,
@@ -187,6 +218,10 @@ export const appendMessage = (message, right = false) => {
     ? elements.getRightMessage(message)
     : elements.getLeftMessage(message);
   messagesContainer.appendChild(messageElement);
+  messageElement.scrollIntoView({
+    behavior: 'smooth',
+    block: 'end'
+  })
 };
 
 export const clearMessenger = () => {
@@ -273,6 +308,17 @@ export const updateStrangerCheckbox = (allowConnections) => {
   allowConnections
     ? showElement(checkboxCheckImg)
     : hideElement(checkboxCheckImg);
+};
+
+// ClusterB of checkbox
+export const updateClusterBCheckbox = (allowConnections) => {
+  const checkboxCheckImg = document.getElementById(
+      "allow_cluster_b_checkbox_image"
+  );
+
+  allowConnections
+      ? showElement(checkboxCheckImg)
+      : hideElement(checkboxCheckImg);
 };
 
 // ui helper functions

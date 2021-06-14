@@ -14,6 +14,22 @@ export const registerSocketEvents = (socket) => {
     ui.updatePersonalCode(socket.id);
   });
 
+  socket.on("connected-peers-status", (data) => {
+    ui.updateStatus(data);
+  });
+
+  socket.on("disconnect-status", (data) => {
+    ui.updateStatus(data);
+  });
+
+  socket.on("cluster-a-status", (data) => {
+    ui.clusterAStatus(data);
+  });
+
+  socket.on("cluster-b-status", (data) => {
+    ui.clusterBStatus(data);
+  });
+
   socket.on("pre-offer", (data) => {
     webRTCHandler.handlePreOffer(data);
   });
@@ -45,6 +61,7 @@ export const registerSocketEvents = (socket) => {
   socket.on("stranger-socket-id", (data) => {
     strangerUtils.connectWithStranger(data);
   });
+
 };
 
 export const sendPreOffer = (data) => {
@@ -63,10 +80,22 @@ export const sendUserHangedUp = (data) => {
   socketIO.emit("user-hanged-up", data);
 };
 
-export const changeStrangerConnectionStatus = (data) => {
-  socketIO.emit("stranger-connection-status", data);
+// ClusterA 소켓 대기열에 추가 및 제거
+export const changeClusterAConnectionStatus = (data) => {
+  socketIO.emit("cluster-a-connection-status", data);
 };
 
-export const getStrangerSocketId = () => {
-  socketIO.emit("get-stranger-socket-id");
+// ClusterB 소켓 대기열 추가 및 제거
+export const changeClusterBConnectionStatus = (data) => {
+  socketIO.emit("cluster-b-connection-status", data);
+};
+
+// ClusterA 소켓 대기열에서 소켓 얻기
+export const getClusterASocketId = () => {
+  socketIO.emit("get-cluster-a-socket-id");
+};
+
+// ClusterB 소켓 대기열에서 소켓 얻기
+export const getClusterBSocketId = () => {
+  socketIO.emit("get-cluster-b-socket-id");
 };

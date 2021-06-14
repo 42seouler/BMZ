@@ -14,11 +14,11 @@ export const getIncomingCallDialog = (
   title.innerHTML = `Incoming ${callTypeInfo} Call`;
 
   const imageContainer = document.createElement("div");
-  imageContainer.classList.add("dialog_image_container");
-  const image = document.createElement("img");
-  const avatarImagePath = "./utils/images/dialogAvatar.png";
-  image.src = avatarImagePath;
-  imageContainer.appendChild(image);
+  // imageContainer.classList.add("dialog_image_container");
+  // const image = document.createElement("img");
+  // const avatarImagePath = "./utils/images/dialogAvatar.png";
+  // image.src = avatarImagePath;
+  // imageContainer.appendChild(image);
 
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("dialog_button_container");
@@ -68,11 +68,11 @@ export const getCallingDialog = (rejectCallHandler) => {
   title.innerHTML = `Calling`;
 
   const imageContainer = document.createElement("div");
-  imageContainer.classList.add("dialog_image_container");
-  const image = document.createElement("img");
-  const avatarImagePath = "./utils/images/dialogAvatar.png";
-  image.src = avatarImagePath;
-  imageContainer.appendChild(image);
+  // imageContainer.classList.add("dialog_image_container");
+  // const image = document.createElement("img");
+  // const avatarImagePath = "./utils/images/dialogAvatar.png";
+  // image.src = avatarImagePath;
+  // imageContainer.appendChild(image);
 
   const buttonContainer = document.createElement("div");
   buttonContainer.classList.add("dialog_button_container");
