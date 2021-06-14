@@ -50,7 +50,7 @@ body {
 
 
 
-@media screen and (max-height: 999px) {
+@media screen and (max-height: 649px) {
   #wrapper {
     visibility: visible;
     z-index: 999;
