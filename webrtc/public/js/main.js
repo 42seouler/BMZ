@@ -7,6 +7,7 @@ import * as recordingUtils from "./recordingUtils.js";
 import * as strangerUtils from "./strangerUtils.js";
 import {getState} from "./store.js";
 
+// console.log(window.screen.width, window.screen.height);
 // initialization of socketIO connection
 const socket = io("/");
 wss.registerSocketEvents(socket);

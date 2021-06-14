@@ -49,26 +49,22 @@ body {
   visibility: hidden;
 }
 
-/*@media screen and (max-width: 1600px),*/
-/*screen and (max-height: 1000px) {*/
-/*  #wrapper {*/
-/*    visibility: visible;*/
-/*    z-index: 999;*/
-/*  }*/
-/*}*/
-@media screen and (max-height: 1000px) {
+
+
+@media screen and (min-height: 1000px) {
   #wrapper {
     visibility: visible;
     z-index: 999;
   }
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (min-width: 1000px) {
   #wrapper {
     visibility: visible;
     z-index: 999;
   }
 }
+
 
 .main_container {
   width: 100%;
