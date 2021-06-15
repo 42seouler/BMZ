@@ -5,7 +5,7 @@ const PORT = process.env.PORT || 80;
 
 const app = express();
 const server = http.createServer(app);
-const io = require("socket.io")(server);
+const io = require("socket.io")(server)
 
 app.use(express.static("public"));
 
