@@ -9,7 +9,16 @@ import {getState} from "./store.js";
 
 // console.log(window.screen.width, window.screen.height);
 // initialization of socketIO connection
-const socket = io("/", {transports: ['websocket']});
+const socket = io("https://randommeal.du.r.appspot.com/", {
+  reconnectionDelay: 1000,
+  reconnection: true,
+  reconnectionAttemps: 10,
+  transports: ['websocket'],
+  agent: false,
+  upgrade: false,
+  rejectUnauthorized: false
+});
+
 wss.registerSocketEvents(socket);
 
 webRTCHandler.getLocalPreview();
