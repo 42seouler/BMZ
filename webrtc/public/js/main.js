@@ -9,7 +9,7 @@ import {getState} from "./store.js";
 
 // console.log(window.screen.width, window.screen.height);
 // initialization of socketIO connection
-const socket = io("/");
+const socket = io("https://randommeal.du.r.appspot.com/");
 wss.registerSocketEvents(socket);
 
 webRTCHandler.getLocalPreview();
