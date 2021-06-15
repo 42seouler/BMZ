@@ -159,7 +159,6 @@ export const handlePreOffer = (data) => {
     callType === constants.callType.CHAT_STRANGER ||
     callType === constants.callType.VIDEO_STRANGER
   ) {
-    console.log(callType);
     ui.showIncomingCallDialog(callType, acceptCallHandler, rejectCallHandler);
     // 즉시 연결을 위해 남겨둠
     // createPeerConnection();
@@ -169,6 +168,7 @@ export const handlePreOffer = (data) => {
 };
 
 const acceptCallHandler = () => {
+  wss.changeCallStatusFalse();
   createPeerConnection();
   sendPreOfferAnswer(constants.preOfferAnswer.CALL_ACCEPTED);
   ui.showCallElements(connectedUserDetails.callType);
@@ -333,6 +333,7 @@ export const handleHangUp = () => {
     connectedUserSocketId: connectedUserDetails.socketId,
   };
 
+  console.log(data.connectedUserSocketId);
   wss.sendUserHangedUp(data);
   closePeerConnectionAndResetState();
 };

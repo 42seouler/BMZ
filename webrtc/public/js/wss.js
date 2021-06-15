@@ -99,3 +99,8 @@ export const getClusterASocketId = () => {
 export const getClusterBSocketId = () => {
   socketIO.emit("get-cluster-b-socket-id");
 };
+
+// 요청 허용시 상태 False 상태 변경하기
+export const changeCallStatusFalse = () => {
+  socketIO.emit("change-call-status-false");
+};
