@@ -7,10 +7,6 @@ const app = express();
 const server = http.createServer(app);
 const io = require("socket.io")(server);
 
-server.listen(PORT, () => {
-  console.log(`listening on ${PORT}`);
-});
-
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
@@ -216,6 +212,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// server.listen(PORT, () => {
-//   console.log(`listening on ${PORT}`);
-// });
+server.listen(PORT, () => {
+  console.log(`listening on ${PORT}`);
+});
